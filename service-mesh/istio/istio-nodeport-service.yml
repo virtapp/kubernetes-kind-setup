@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: istio-ingress
+    meta.helm.sh/release-namespace: istio-system
+  labels:
+    app: istio-ingressgateway
+    app.kubernetes.io/managed-by: Helm
+    install.operator.istio.io/owning-resource: unknown
+    istio: ingressgateway
+    istio.io/rev: default
+    operator.istio.io/component: IngressGateways
+    release: istio-ingress
+  name: istio-ingressgateway-nodeport
+  namespace: istio-system
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: status-port
+    nodePort: 30021
+    port: 15021
+    protocol: TCP
+    targetPort: 15021
+  - name: http2
+    nodePort: 30080
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  - name: https
+    nodePort: 30443
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: istio-ingressgateway
+    istio: ingressgateway
+  sessionAffinity: None
+  type: NodePort

@@ -1,0 +1,60 @@
+application:
+  name: whois
+  namespace: whois
+  version: "1.0"
+  image: fidelissauro/whois:latest
+  kind: deployment
+  port: 8080
+  protocol: HTTP
+
+env:          
+  CHAOS_ENABLED: "true"
+  ENVIRONMENT: "dev"
+  VERSION: "v1"
+
+replicas: 
+  desired: 1
+  minimum: 1
+  maximum: 6
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1024Mi  
+
+probe:
+  startup:
+    enabled: false
+    path: /healthcheck
+    failureThreshold: 10
+    periodSeconds: 10
+  liveness:
+    enabled: false
+    path: /healthcheck
+    failureThreshold: 10
+    periodSeconds: 10
+  readiness:
+    enabled: true
+    path: /healthcheck
+    failureThreshold: 10
+    periodSeconds: 10
+
+prometheus:
+  scrape: false
+  path: /metrics
+
+autoscaling:
+  hpa:
+    cpu: 
+      enabled: true
+      averageUtilization: 80
+    memory:
+      enabled: true
+      averageUtilization: 80
+
+ingress:
+  host: whois.local.cluster
+
